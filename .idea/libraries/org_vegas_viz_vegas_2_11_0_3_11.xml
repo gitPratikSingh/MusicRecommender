@@ -1,0 +1,34 @@
+<component name="libraryTable">
+  <library name="org.vegas-viz:vegas_2.11:0.3.11" type="repository">
+    <properties maven-id="org.vegas-viz:vegas_2.11:0.3.11" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/vegas_2.11-0.3.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scala-library-2.11.8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/vegas-macros_2.11-0.3.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scala-reflect-2.11.8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/macro-compat_2.11-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/circe-core_2.11-0.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/circe-numbers_2.11-0.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/cats-core_2.11-0.9.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/cats-macros_2.11-0.9.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/cats-kernel_2.11-0.9.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/simulacrum_2.11-0.10.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/machinist_2.11-0.6.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/circe-generic_2.11-0.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/shapeless_2.11-2.3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/circe-parser_2.11-0.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/circe-jawn_2.11-0.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jawn-parser_2.11-0.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/monocle-macro_2.11-1.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/monocle-core_2.11-1.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scalaz-core_2.11-7.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scala-parser-combinators_2.11-1.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scala-xml_2.11-1.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scalafx_2.11-8.0.92-R10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/vega-lite-1.2.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/vega-3.0.0-rc4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
