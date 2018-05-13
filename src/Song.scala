@@ -1,4 +1,4 @@
-import java.io.{BufferedInputStream, ByteArrayOutputStream, FileInputStream, InputStream}
+import java.io._
 import java.util
 
 import javax.sound.sampled.AudioSystem
@@ -37,6 +37,19 @@ class Audio(val data: Array[Byte], val byteFreq: Int, val sampleRate: Float, val
       val db = 20 * math.log10(amplitude)
       (freq, db)
     }.filter({case(freq, power) => freq>=20 && freq<=20000})
+  }
+
+  // The groupBy method takes a predicate function as its parameter and uses it to group elements by key and values into a Map collection
+  def hash():String ={
+      val freqDomain = frequencyDomain()
+
+      freqDomain.groupBy({case(freq, power) => Song.getFrequencyBand(freq)})
+      .map({case(bucket, freqs) =>
+        val dominant = freqs.map({case(freq, power) => (Song.findClosestNote(freq.toInt), power)})
+          .sortBy({case(note, power) => power}) // note with the maximum power
+          .reverse.head._1
+        (bucket, dominant)
+      }).toList.sortBy(_._1).map(_._2).mkString("-")
   }
 
   def findPeakFreq():Float = {
@@ -86,7 +99,7 @@ class Audio(val data: Array[Byte], val byteFreq: Int, val sampleRate: Float, val
   }
 }
 
-object LoadSongs {
+object Song {
 
   val range = Array(20, 60, 250, 2000, 4000, 6000)
   val notes:Seq[(Int, String)] = Source.fromInputStream(new FileInputStream("Resources/notes")).getLines().flatMap({line =>
@@ -105,15 +118,24 @@ object LoadSongs {
   }
 
   def findClosestNote(freq: Float): String = {
-    val up = notes.filter(_._1 > freq)
+    val up = notes.filter(_._1 >= freq)
+    val down = notes.filter(_._1 <= freq)
+
+    if (up.isEmpty && down.isEmpty) return "-"
+    else if (up.isEmpty) return down.last._2
+    else if (down.isEmpty) return up.head._2
+
+    val upL = up.head
+    val downL = down.last
+    if (math.abs(freq - upL._1) < math.abs(freq - downL._1)) upL._2 else downL._2
   }
 
   def readFile(song:String): Audio = {
-    val is = new FileInputStream(song)
-    processSong(is, 0, 10000)
+    val is = new DataInputStream(new FileInputStream(song))
+    processSong(is, 0, 1000)
   }
 
-  def processSong(stream: FileInputStream, minTime: Long, maxTime: Long): Audio = {
+  def processSong(stream: DataInputStream, minTime: Long, maxTime: Long): Audio = {
 
     require(minTime >= 0)
     require(minTime < maxTime)
@@ -167,10 +189,10 @@ object LoadSongs {
 
   def main(args:Array[String]): Unit ={
 
-   // val audioObject = readFile("Data/mario.wav")
-   // print(audioObject)
-    //print(audioObject.timeDomain().length)
-    //audioObject.timeDomain().filter(x => x._2>0).foreach(print)
+    val audioObject = readFile("Data/mario.wav")
+    print(audioObject)
+    print(audioObject.timeDomain().length)
+    audioObject.timeDomain().filter(x => x._2>0).foreach(print)
 
 //    plot()
 
