@@ -170,8 +170,8 @@ object Song {
       totalRead += c
       if (c > -1 && totalRead >= minLength && totalRead < maxLength) {
         out.write(buffer, 0, c)
-        buffer.foreach(print(_))
-        println()
+        //buffer.foreach(print(_))
+        //println()
       } else {
         if (totalRead >= minLength) {
           available = false
