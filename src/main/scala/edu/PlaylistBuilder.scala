@@ -50,6 +50,11 @@ object PlaylistBuilder extends SparkJob with NamedRddSupport{
 
       val graph = Graph.fromEdges(crossSongRdd, 0L, defaultStorageLevel, defaultStorageLevel) 
       
+      /*
+       * A simple PageRank could help us create a general-purpose playlist. 
+       * And although this isn't targeted towards any individual, it could serve 
+       * as a playlist for a random user.
+       * */
       val prGraph = graph.pageRank(TOLERANCE, TELEPORT)
       
       val edges = prGraph.edges.map({ edge =>
@@ -65,6 +70,14 @@ object PlaylistBuilder extends SparkJob with NamedRddSupport{
          val songIds = songIdsB.value
          vertices.map({case(vertix, priority) => Node(vertix, songIds.getOrElse(vertix, "UNKNOWN"), priority)})
       })
+      
+      edges.saveAsCassandraTable(KEYSPACE, TABLE_EDGE)
+      vertices.saveAsCassandraTable(KEYSPACE, TABLE_NODE)
+  
+      // Then in the implementation of the job, RDDs can be stored with a given name:
+      this.namedRdds.update(RDD_EDGE, edges)
+      this.namedRdds.update(RDD_NODE, vertices)
+      
     }
     
     override def validate(sc:SparkContext, config: Config): SparkJobValidation = {
