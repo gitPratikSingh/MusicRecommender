@@ -1,4 +1,4 @@
-package edu
+package recommender
 
 import java.io.{DataInputStream, File, FileInputStream}
 import org.apache.spark.SparkContext

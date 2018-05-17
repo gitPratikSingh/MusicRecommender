@@ -1,4 +1,4 @@
-package edu
+package recommender
 
 import com.datastax.spark.connector._
 import com.typesafe.config.Config

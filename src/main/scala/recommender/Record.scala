@@ -1,4 +1,4 @@
-package edu
+package recommender
 
 case class Record(id: Long, name: String)
 case class Hash(id: String, songs: List[Long])

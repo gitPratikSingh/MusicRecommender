@@ -24,6 +24,7 @@
     <maven.compiler.target>1.6</maven.compiler.target>
     <encoding>UTF-8</encoding>
     <scala.version>2.10.6</scala.version>
+    <play2.version>2.2.1</play2.version>
   </properties>
 
   <dependencies>
@@ -63,18 +64,7 @@
     <artifactId>spark-graphx_2.10</artifactId>
     <version>2.2.1</version>
 </dependency>
-<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
-<dependency>
-    <groupId>org.apache.commons</groupId>
-    <artifactId>commons-math3</artifactId>
-    <version>3.6.1</version>
-</dependency>
-<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
-<dependency>
-    <groupId>commons-io</groupId>
-    <artifactId>commons-io</artifactId>
-    <version>2.6</version>
-</dependency>
+
 <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-client -->
 <dependency>
     <groupId>org.apache.hadoop</groupId>
@@ -85,7 +75,7 @@
 <dependency>
     <groupId>com.datastax.spark</groupId>
     <artifactId>spark-cassandra-connector_2.10</artifactId>
-    <version>2.0.7</version>
+    <version>1.6.0</version>
 </dependency>
 <!-- https://mvnrepository.com/artifact/com.typesafe/config -->
 <dependency>
@@ -94,16 +84,54 @@
     <version>1.3.1</version>
 </dependency>
 
-<!-- https://mvnrepository.com/artifact/spark.jobserver/job-server-api 
 <dependency>
-    <groupId>spark.jobserver</groupId>
-    <artifactId>job-server-api_2.10</artifactId>
-    <version>0.6.2</version>
+    <groupId>com.datastax.cassandra</groupId>
+    <artifactId>cassandra-driver-core</artifactId>
+    <version>3.0.2</version>
 </dependency>
--->
+           
+		  <dependency>
+               <groupId>org.apache.commons</groupId>
+               <artifactId>commons-math3</artifactId>
+               <version>3.4.1</version>
+           </dependency>
+           <dependency>
+               <groupId>org.json4s</groupId>
+               <artifactId>json4s-native_2.10</artifactId>
+               <version>3.4.0</version>
+           </dependency>
+           <dependency>
+               <groupId>spark.jobserver</groupId>
+               <artifactId>job-server-api_2.10</artifactId>
+               <version>0.6.2</version>
+           </dependency>
+           <dependency>
+               <groupId>commons-io</groupId>
+               <artifactId>commons-io</artifactId>
+               <version>1.3.2</version>
+           </dependency>
+           
+<dependency>
+    <groupId>com.typesafe.play</groupId>
+    <artifactId>play_2.10</artifactId>
+    <version>2.4.0-M1</version>
+</dependency>
 
  </dependencies>
 
+	<repositories>
+        <repository>
+            <id>spark-job-server</id>
+            <url>https://dl.bintray.com/spark-jobserver/maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
     <plugins>

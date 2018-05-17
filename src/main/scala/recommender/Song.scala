@@ -1,4 +1,4 @@
-package edu
+package recommender
 
 
 import java.io._

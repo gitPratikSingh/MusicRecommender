@@ -1,5 +1,5 @@
 
-package edu
+package recommender
 
 object Config {
   final val KEYSPACE = "music"

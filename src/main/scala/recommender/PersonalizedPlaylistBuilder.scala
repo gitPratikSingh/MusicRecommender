@@ -1,7 +1,9 @@
-package edu
+package recommender
 
 import com.typesafe.config.Config
 import Config._
+import recommender.Config.*;
+
 import org.apache.spark.SparkContext
 import org.apache.spark.graphx.Graph
 import spark.jobserver._
