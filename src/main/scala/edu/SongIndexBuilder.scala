@@ -15,7 +15,72 @@ object SongIndexBuilder extends SparkJob{
   override def runJob(sc: SparkContext, conf: Config): Any = {
     val inputDir = conf.getString("input.dir")
     val SampleSizeB = sc.broadcast(SAMPLE_SIZE)
+    
     val audioSongRdd = SongLibrary.read(inputDir, sc, MIN_TIME, MAX_TIME)
+    
+    // when you just want to transform the values and keep the keys as-is, it's recommended to use mapValues
+    // if you applied any custom partitioning to your RDD (e.g. using partitionBy), using map would "forget" 
+    // that paritioner (the result will revert to default partitioning) 
+    // as the keys might have changed; mapValues, however, preserves any partitioner set on the RDD.
+    
+    val songRdd = audioSongRdd.keys.sortBy(Song => Song).zipWithIndex().mapValues(l => l+1)
+    
+    // There is no significant performance difference. collectAsMap simply collects RDD and creates a mutable HashMap on a driver
+    val sMap = songRdd.collectAsMap()
+    sMap.foreach(println(_))
+    
+    /* Broadcast this map 
+     * (ChillingMusic.wav,1)
+     * (mario.wav,3)
+     * (KissesinParadise.wav,2)
+     * */    
+    
+    val songIdsB = sc.broadcast(sMap)
+    
+    // convert songsRdd into RecordList
+    val recordRdd = songRdd.map({case(song, id) => Record(id, song)}) 
+    
+    // convert audioSongRdd: RDD[(String, Audio)] into RDD[(Long, Audio)] and also partition the audios so that each song is present in one partition
+    // mapPartitions() can be called for each partitions while map() and foreach() is called for each elements in an RDD
+    // It runs one at a time on each partition or block of the Rdd, so function must be of type iterator<T>. It improves performance by reducing creation of object in map function.
+
+    val audioRdd = audioSongRdd.mapPartitions({audios => 
+      val songIds = songIdsB.value
+      audios.map({case(song, audio) => (songIds.get(song).get, audio)})
+    })
+    
+  /*    
+   *    map(func)
+   *    Return a new distributed dataset formed by passing each element of the source through a function func.
+   *    
+   *    flatMap(func)
+   *    Similar to map, but each input item can be mapped to 0 or more output items (so func should return a Seq rather than a single item).
+   *    
+   *    The transformation function:
+   *    map: One element in -> one element out.
+   *    flatMap: One element in -> 0 or more elements out (a collection).
+	*/  
+	  
+    // This step generates samples of the songs 
+    val sampleRdd = audioRdd.flatMap({case(songId, audio) => 
+      audio.sampleByTime(SampleSizeB.value, true).map({case(sample) => (songId, sample)})  
+    })
+    
+    // Now we find the hashes of all the samples
+    // hash composed of five letters (such as [E-D#-A-B-B-F]) corresponding to the strongest note 
+    // (the highest peak) in each of the preceding frequency bands. We consider this hash a fingerprint 
+    // for that particular 50 milliseconds time window.
+ 
+    // we group all song IDs sharing the same hash in order to build an RDD of unique hashes
+    
+    val hashRdd = sampleRdd.map({case(songId, audioSample) => 
+        (audioSample.hash(), songId)
+    }).groupByKey().map({case(hash, songs) => Hash(hash, songs.toList)})
+    
+    
+    hashRdd.saveAsCassandraTable(KEYSPACE, TABLE_HASH)
+    recordRdd.saveAsCassandraTable(KEYSPACE, TABLE_RECORD)
+    
   }
   
   override def validate(sc: SparkContext, config: Config): SparkJobValidation = {
@@ -98,10 +163,26 @@ object SongIndexBuilder extends SparkJob{
    *    map: One element in -> one element out.
    *    flatMap: One element in -> 0 or more elements out (a collection).
 	*/  
-
-    audioRdd.flatMap({case(songId, audio) => 
+	  
+    // This step generates samples of the songs 
+    val sampleRdd = audioRdd.flatMap({case(songId, audio) => 
       audio.sampleByTime(SampleSizeB.value, true).map({case(sample) => (songId, sample)})  
     })
+    
+    // Now we find the hashes of all the samples
+    // hash composed of five letters (such as [E-D#-A-B-B-F]) corresponding to the strongest note 
+    // (the highest peak) in each of the preceding frequency bands. We consider this hash a fingerprint 
+    // for that particular 50 milliseconds time window.
+ 
+    // we group all song IDs sharing the same hash in order to build an RDD of unique hashes
+    
+    val hashRdd = sampleRdd.map({case(songId, audioSample) => 
+        (audioSample.hash(), songId)
+    }).groupByKey().map({case(hash, songs) => Hash(hash, songs.toList)})
+    
+    
+    hashRdd.saveAsCassandraTable(KEYSPACE, TABLE_HASH)
+    recordRdd.saveAsCassandraTable(KEYSPACE, TABLE_RECORD)
     
     print("audioSongRdd.count()" + audioSongRdd.count())
     

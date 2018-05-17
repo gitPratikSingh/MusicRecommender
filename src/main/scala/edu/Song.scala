@@ -40,8 +40,10 @@ class Audio(val data: Array[Byte], val byteFreq: Int, val sampleRate: Float, val
     }.filter({case(freq, power) => freq>=20 && freq<=20000})
   }
 
-  // The groupBy method takes a predicate function as its parameter and uses it to group elements by key and values into a Map collection
-  def hash():String ={
+  // The groupBy method takes a predicate function as its parameter 
+  // and uses it to group elements by key and values into a Map collection
+  
+  def hash():String = {
       val freqDomain = frequencyDomain()
 
       freqDomain.groupBy({case(freq, power) => Song.getFrequencyBand(freq)})
