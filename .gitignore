@@ -39,3 +39,12 @@ build.log
 
 #SHITTY output not in target directory
 build.log
+=======
+*.class
+*.log
+.idea/*
+.idea
+out
+out/*
+*.iml
+
