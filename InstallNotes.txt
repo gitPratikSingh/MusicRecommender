@@ -1,5 +1,3 @@
-install_spark_centos7.sh
-
 #!/bin/bash
 # Install Spark on CentOS 7
 yum install java -y
